@@ -1,0 +1,73 @@
+Users -- 
+
+Id              INT (PK)
+Name            VARCHAR(100) NOT NULL
+Email           VARCHAR(150) NOT NULL UNIQUE
+PasswordHash    VARCHAR(255) NOT NULL
+Role            VARCHAR(20) NOT NULL
+CreatedAt       DATETIME NOT NULL
+
+Allowed roles: Customer, Organizer, Admin.
+
+Events -- 
+
+Id              INT (PK)
+OrganizerId     INT (FK → Users.Id)
+CategoryId      INT (FK → Categories.Id)
+Title           VARCHAR(200) NOT NULL
+Description     TEXT
+Location        VARCHAR(255) NOT NULL
+StartDate       DATETIME NOT NULL
+EndDate         DATETIME NOT NULL
+Status          VARCHAR(20) NOT NULL
+CreatedAt       DATETIME NOT NULL
+UpdatedAt       DATETIME
+
+Event statuses: Pending, Approved, Rejected, Cancelled.
+
+TicketTypes --
+
+Id                  INT (PK)
+EventId             INT (FK → Events.Id)
+Name                VARCHAR(100) NOT NULL
+Price               DECIMAL(10,2) NOT NULL
+TotalQuantity       INT NOT NULL
+AvailableQuantity   INT NOT NULL
+
+Business rules:
+- Price must be greater than or equal to zero.
+- TotalQuantity must be greater than zero.
+- AvailableQuantity must be between zero and TotalQuantity.
+
+Bookings -- 
+
+Id              INT (PK)
+UserId          INT (FK → Users.Id)
+BookingDate     DATETIME NOT NULL
+TotalAmount     DECIMAL(10,2) NOT NULL
+Status          VARCHAR(20) NOT NULL
+
+Booking statuses: Pending, Confirmed, Cancelled, Failed.
+
+BookingItems --
+
+Id              INT (PK)
+BookingId       INT (FK → Bookings.Id)
+TicketTypeId    INT (FK → TicketTypes.Id)
+Quantity        INT NOT NULL
+UnitPrice       DECIMAL(10,2) NOT NULL
+
+We'll add a unique constraint on (BookingId, TicketTypeId) 
+so the same ticket type isn't unnecessarily duplicated within one booking.
+
+Payments --
+
+Id                      INT (PK)
+BookingId               INT (FK → Bookings.Id)
+Amount                  DECIMAL(10,2) NOT NULL
+PaymentStatus           VARCHAR(20) NOT NULL
+TransactionReference    VARCHAR(150)
+CreatedAt               DATETIME NOT NULL
+
+We'll allow multiple payment attempts for one booking, since a customer might retry a failed payment.
+
