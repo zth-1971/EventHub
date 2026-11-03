@@ -1,0 +1,19 @@
+# Angular
+node_modules/
+dist/
+.angular/
+
+# .NET
+bin/
+obj/
+.vs/
+*.user
+*.suo
+
+# Environment and secrets
+.env
+.env.*
+
+# Operating system
+.DS_Store
+Thumbs.db
